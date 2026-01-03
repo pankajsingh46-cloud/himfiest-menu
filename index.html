@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HIMFEAST Digital Menu</title>
+    <style>
+        /* ========================
+           CSS VARIABLES (DARK THEME)
+           ======================== */
+        :root {
+            --primary-color: #FF5252;
+            --header-bg: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --section-content-bg: #252525;
+            
+            /* Text Colors */
+            --text-main: #f0f0f0;
+            --text-secondary: #b0b0b0;
+            --price-color: #ffd700;
+            
+            /* Indicators */
+            --veg-green: #2ecc71;
+            --non-veg-red: #e74c3c;
+            
+            --header-height: 65px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            /* DARK GRADIENT BACKGROUND */
+            background: linear-gradient(135deg, #1a0505 0%, #000000 100%);
+            color: var(--text-main);
+            padding-top: var(--header-height);
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+
+        /* ========================
+           HEADER
+           ======================== */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background-color: var(--header-bg);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+            border-bottom: 1px solid #333;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ========================
+           MENU CONTAINER
+           ======================== */
+        .menu-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 15px;
+        }
+
+        /* ========================
+           SECTION CARDS
+           ======================== */
+        .menu-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all var(--transition-speed);
+            border: 1px solid #333;
+        }
+
+        .section-header {
+            position: relative;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            cursor: pointer;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Dark overlay on images */
+        .section-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.4));
+            z-index: 1;
+        }
+
+        .section-title {
+            position: relative;
+            z-index: 2;
+            color: #ffffff;
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .accordion-icon {
+            position: relative;
+            z-index: 2;
+            color: #fff;
+            font-size: 1.5rem;
+            transition: transform var(--transition-speed);
+        }
+
+        .menu-section.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        /* ========================
+           SECTION CONTENT
+           ======================== */
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: var(--section-content-bg);
+        }
+
+        .menu-section.active .section-content {
+            max-height: 1200px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        /* ========================
+           ITEMS
+           ======================== */
+        .menu-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px 20px;
+            border-bottom: 1px solid #3d3d3d;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Indicators (Veg/Non-Veg) */
+        .indicator {
+            width: 16px;
+            height: 16px;
+            border: 2px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .indicator.veg { border-color: var(--veg-green); }
+        .indicator.veg::after {
+            content: ''; width: 8px; height: 8px;
+            background-color: var(--veg-green); border-radius: 50%;
+        }
+
+        .indicator.non-veg { border-color: var(--non-veg-red); }
+        .indicator.non-veg::after {
+            content: ''; width: 8px; height: 8px;
+            background-color: var(--non-veg-red); border-radius: 50%;
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .item-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin-top: 4px;
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: var(--price-color);
+            margin-left: 15px;
+            white-space: nowrap;
+            font-size: 1rem;
+        }
+
+        /* ========================
+           SPECIAL STYLES
+           ======================== */
+        
+        /* Highlight for Meal Boxes */
+        .highlight-section-bg {
+            border: 1px solid var(--price-color);
+        }
+
+        /* Special Item (Nutri Palak) */
+        .special-item {
+            background-color: rgba(46, 204, 113, 0.1); /* Subtle green tint */
+            border-left: 3px solid var(--veg-green);
+        }
+
+        .special-badge {
+            background-color: var(--price-color);
+            color: #000;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+
+        /* ========================
+           FOOTER
+           ======================== */
+        .footer-note {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .visit-thanks {
+            margin-top: 10px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="fixed-header">
+        <div class="logo-area">
+            <img src="images/logo.png" alt="HIMFEAST" class="logo-img">
+            <span class="header-title">HIMFEAST</span>
+        </div>
+    </header>
+
+    <main id="menu-container" class="menu-container">
+        </main>
+
+    <footer class="footer-note">
+        <p>Please wait a few minutes while we prepare your order.</p>
+        <p class="visit-thanks">Thank you for your kind visit!</p>
+    </footer>
+
+    <script>
+        // DATA STRUCTURE
+        // Make sure your image filenames match exactly!
+        const menuData = [
+            {
+                id: 'veg-burgers',
+                title: 'Veg Burgers',
+                image: 'images/vegburger.jpeg', 
+                items: [
+                    { name: 'Veg Rockstar', price: 55, type: 'veg' },
+                    { name: 'Veg Snacker', price: 85, type: 'veg' },
+                    { name: 'Veg Makhni', price: 95, type: 'veg' },
+                    { name: 'Rockstar Sr.', price: 135, type: 'veg' },
+                    { name: 'Cheese Chilly Lava', price: 135, type: 'veg' },
+                    { name: 'Mighty Cheese', price: 175, type: 'veg' }
+                ]
+            },
+            {
+                id: 'non-veg-burgers',
+                title: 'Non-Veg Burgers',
+                image: 'images/nonvegburger.jpeg',
+                items: [
+                    { name: 'Crispy Chicken', price: 95, type: 'non-veg' },
+                    { name: 'Butter Chicken', price: 115, type: 'non-veg' },
+                    { name: 'Chicken Mighty Cheese', price: 185, type: 'non-veg' }
+                ]
+            },
+            {
+                id: 'fries-sides',
+                title: 'Fries & Sides',
+                image: 'images/fries.jpeg',
+                items: [
+                    { name: 'Salted Fries', price: 85, type: 'veg' },
+                    { name: 'Peri Peri Fries', price: 95, type: 'veg' },
+                    { name: 'Cheese Loaded Fries', price: 170, type: 'veg' }
+                ]
+            },
+            {
+                id: 'meal-boxes',
+                title: 'Meal Boxes (Combos)',
+                image: 'images/combo.jpeg',
+                isSpecialSection: true,
+                items: [
+                    { 
+                        name: 'Veg Meal Box', 
+                        price: 200, 
+                        type: 'veg', 
+                        desc: '(Veg Snacker Burger, Crinkle Fries, ChocoPie, Coke 250ml)'
+                    },
+                    { 
+                        name: 'Chicken Meal Box', 
+                        price: 220, 
+                        type: 'non-veg', 
+                        desc: '(Butter Chicken Burger, Crinkle Fries, ChocoPie, Coke 250ml)'
+                    }
+                ]
+            },
+            {
+                id: 'tandoori',
+                title: 'Tandoori Dishes',
+                image: 'images/tandoori.jpeg',
+                items: [
+                    { name: 'Malai Chaap', price: 180, type: 'veg' },
+                    { name: 'Masala Chaap', price: 130, type: 'veg' },
+                    { name: 'Afghani Chaap', price: 150, type: 'veg' },
+                    { name: 'Paneer Tikka', price: 200, type: 'veg' }
+                ]
+            },
+            {
+                id: 'kulcha',
+                title: 'Amritsari Kulcha',
+                image: 'images/kulcha.jpeg',
+                items: [
+                    { name: 'Aaloo Kulcha', price: 90, type: 'veg' },
+                    { name: 'Gobi Kulcha', price: 100, type: 'veg' },
+                    { name: 'Mix Kulcha', price: 110, type: 'veg' },
+                    { name: 'Paneer Kulcha', price: 130, type: 'veg' },
+                    { name: 'Patty Kulcha', price: 150, type: 'veg' },
+                    { name: 'Onion Kulcha', price: 100, type: 'veg' },
+                    { name: 'Chur Chur Kulcha', price: 110, type: 'veg' },
+                    { name: 'Lemon Kulcha', price: 110, type: 'veg' },
+                    { name: 'Pizza Kulcha', price: 200, type: 'veg' },
+                    { name: 'Special Nutri Palak Kulcha', price: 150, type: 'veg', isSpecialItem: true }
+                ]
+            },
+            {
+                id: 'cold-beverages',
+                title: 'Cold Beverages',
+                image: 'images/coldbeverages.jpeg',
+                items: [
+                    { name: 'Lemon Iced Tea', price: 95, type: 'veg' },
+                    { name: 'Masala Lemonade', price: 110, type: 'veg' },
+                    { name: 'Virgin Mojito', price: 135, type: 'veg' },
+                    { name: 'Strawberry Milkshake', price: 135, type: 'veg' },
+                    { name: 'Butter Scotch Milkshake', price: 135, type: 'veg' },
+                    { name: 'Choco Oreo Milkshake', price: 195, type: 'veg' },
+                    { name: 'Classic Cold Coffee', price: 125, type: 'veg' },
+                    { name: 'Hazelnut Cold Coffee', price: 145, type: 'veg' },
+                    { name: 'Kulhad Lassi', price: 60, type: 'veg' }
+                ]
+            },
+            {
+                id: 'hot-beverages',
+                title: 'Hot Beverages',
+                image: 'images/hotone.jpeg',
+                items: [
+                    { name: 'Kulhad Chai', price: 30, type: 'veg' },
+                    { name: 'Hot Coffee', price: 60, type: 'veg' }
+                ]
+            }
+        ];
+
+        // RENDER LOGIC
+        const menuContainer = document.getElementById('menu-container');
+
+        function renderMenu() {
+            menuData.forEach(section => {
+                const sectionEl = document.createElement('div');
+                sectionEl.className = 'menu-section';
+                if(section.isSpecialSection) sectionEl.classList.add('highlight-section-bg');
+                
+                // Header with Image
+                const headerEl = document.createElement('div');
+                headerEl.className = 'section-header';
+                headerEl.style.backgroundImage = `url('${section.image}')`;
+                
+                headerEl.innerHTML = `
+                    <span class="section-title">${section.title}</span>
+                    <span class="accordion-icon">&#9660;</span>
+                `;
+
+                headerEl.addEventListener('click', () => toggleSection(sectionEl));
+
+                // Items Container
+                const contentEl = document.createElement('div');
+                contentEl.className = 'section-content';
+                const itemListEl = document.createElement('div');
+                itemListEl.style.padding = '10px 0';
+
+                section.items.forEach(item => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'menu-item';
+                    if (item.isSpecialItem) itemEl.classList.add('special-item');
+
+                    const indicatorClass = item.type === 'veg' ? 'veg' : 'non-veg';
+                    let specialBadgeHtml = item.isSpecialItem ? '<span class="special-badge">MUST TRY</span>' : '';
+                    let descHtml = item.desc ? `<div class="item-desc">${item.desc}</div>` : '';
+
+                    itemEl.innerHTML = `
+                        <div class="indicator ${indicatorClass}"></div>
+                        <div class="item-details">
+                            <div class="item-name">${item.name} ${specialBadgeHtml}</div>
+                            ${descHtml}
+                        </div>
+                        <div class="item-price">₹${item.price}</div>
+                    `;
+
+                    itemListEl.appendChild(itemEl);
+                });
+
+                contentEl.appendChild(itemListEl);
+                sectionEl.appendChild(headerEl);
+                sectionEl.appendChild(contentEl);
+                menuContainer.appendChild(sectionEl);
+            });
+        }
+
+        function toggleSection(clickedSection) {
+            const isOpen = clickedSection.classList.contains('active');
+            document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active'));
+            
+            if (!isOpen) {
+                clickedSection.classList.add('active');
+                setTimeout(() => {
+                    const headerOffset = 70; 
+                    const elementPosition = clickedSection.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                }, 300);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', renderMenu);
+    </script>
+</body>
+</html>
